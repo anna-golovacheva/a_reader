@@ -1,0 +1,14 @@
+.idea
+*.pyc
+__pycache__
+db.sqlite3
+media/
+.DS_Store
+env
+.env
+env/
+*.log
+/staticfiles/
+.vscode/
+flake8_results.txt
+celerybeat-schedule
