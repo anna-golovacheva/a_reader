@@ -38,7 +38,9 @@ async def start_game(message: Message):
 
 
 if __name__ == '__main__':
-    bot_db = DBConnect(db)
-    user = User('Mike')
-    user.is_active = False
+    # bot_db = DBConnect(db)
+    user = User.create('Pam')
+    user.user_name = 'Ppam'
+    user.wins_num = 5
+
     # dp.run_polling(bot)

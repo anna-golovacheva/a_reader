@@ -4,38 +4,52 @@ from settings import db
 
 class User:
     table_name = 'users'
-    id_count = 0
 
-    id = 0
+    pk = 0
     user_name = ''
     is_active = True
     wins_num = 0
 
-    def __init__(self, name):
-        print(User.id_count)
-
-        self.id = self.__count_ids()
-        print(self.id)
-        self.user_name = name
-        dbase = DBConnect(db)
-        dbase.create_object(User.table_name, ['id', 'user_name',], [self.id, name])
-
-    @classmethod
-    def __count_ids(cls):
-        print(cls.id_count)
-        cls.id_count += 1
-        print(cls.id_count)
-        return cls.id_count
+    def __init__(self, pk, user_name, is_active, wins_num):
+        self.pk = pk
+        self.user_name = user_name
+        self.is_active = is_active
+        self.wins_num = wins_num
 
     def __setattr__(self, key: str, value: Any) -> None:
-        print(key)
-        print(value)
-        print(User.__dict__)
-        print(key in User.__dict__)
-        if key in User.__dict__ and key != 'id':
+        if key in User.__dict__ and key not in ('pk', 'table_name'):
             self.__dict__[key] = value
             dbase = DBConnect(db)
-            dbase.set_field(User.table_name, self.id, key, value)
+            dbase.set_field(User.table_name, self.pk, key, value)
         else:
-            print('!')
             super().__setattr__(key, value)
+
+    @staticmethod
+    def get_object(search: dict[str, str]):
+        dbase = DBConnect(db)
+        data_list = dbase.get_objects(User.table_name, search=search)
+        if len(data_list) >= 1:
+            object = User(*list(data_list[0].values()))
+            return object
+
+    @staticmethod
+    def get_objects(search: dict[str, str]):
+        dbase = DBConnect(db)
+        data_list = dbase.get_objects(User.table_name, search)
+        if len(data_list) >= 1:
+            object_list = [User(*list(data.values())) for data in data_list]
+            return object_list
+
+    @staticmethod
+    def create(user_name):
+        dbase = DBConnect(db)
+        pk = dbase.create_object(User.table_name, ['user_name',], [user_name])
+        return User.get_object({'id': pk})
+
+    @staticmethod
+    def delete(delete: dict[str, str]):
+        dbase = DBConnect(db)
+        dbase.delete_objects(User.table_name, delete)
+
+    def __repr__(self):
+        return f'User_{self.pk}_{self.user_name}'
