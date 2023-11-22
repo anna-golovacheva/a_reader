@@ -1,55 +1,77 @@
 from typing import Any
+from dataclasses import dataclass
+
 from data import DBConnect
-from settings import db
+from settings import db, table_name_1, table_name_2
 
-class User:
-    table_name = 'users'
 
-    pk = 0
-    user_name = ''
-    is_active = True
-    wins_num = 0
-
-    def __init__(self, pk, user_name, is_active, wins_num):
-        self.pk = pk
-        self.user_name = user_name
-        self.is_active = is_active
-        self.wins_num = wins_num
+@dataclass
+class BaseClass:
+    pk: int
 
     def __setattr__(self, key: str, value: Any) -> None:
-        if key in User.__dict__ and key not in ('pk', 'table_name'):
+        if key in self.__class__.__dict__ and key not in ('pk', 'table_name'):
             self.__dict__[key] = value
             dbase = DBConnect(db)
-            dbase.set_field(User.table_name, self.pk, key, value)
+            dbase.set_field(self.__class__.table_name, self.pk, key, value)
         else:
             super().__setattr__(key, value)
 
-    @staticmethod
-    def get_object(search: dict[str, str]):
+    @classmethod
+    def get_object(cls, search: dict[str, str]):
         dbase = DBConnect(db)
-        data_list = dbase.get_objects(User.table_name, search=search)
+        data_list = dbase.get_objects(cls.table_name, search=search)
         if len(data_list) >= 1:
-            object = User(*list(data_list[0].values()))
+            object = cls(*list(data_list[0].values()))
             return object
 
-    @staticmethod
-    def get_objects(search: dict[str, str]):
+    @classmethod
+    def get_objects(cls, search: dict[str, str]):
         dbase = DBConnect(db)
-        data_list = dbase.get_objects(User.table_name, search)
+        data_list = dbase.get_objects(cls.table_name, search)
         if len(data_list) >= 1:
-            object_list = [User(*list(data.values())) for data in data_list]
+            object_list = [cls(*list(data.values())) for data in data_list]
             return object_list
 
-    @staticmethod
-    def create(user_name):
+    @classmethod
+    def delete(cls, delete: dict[str, str]):
         dbase = DBConnect(db)
-        pk = dbase.create_object(User.table_name, ['user_name',], [user_name])
-        return User.get_object({'id': pk})
+        dbase.delete_objects(cls.table_name, delete)
 
-    @staticmethod
-    def delete(delete: dict[str, str]):
+
+@dataclass
+class User(BaseClass):
+    user_name: str = ''
+    is_active: bool = True
+    wins_num: int = 0
+
+    table_name: str = table_name_1
+
+    @classmethod
+    def create(cls, user_name):
         dbase = DBConnect(db)
-        dbase.delete_objects(User.table_name, delete)
+        pk = dbase.create_object(cls.table_name, ['user_name',], [user_name])
+        return cls.get_object({'id': pk})
 
     def __repr__(self):
         return f'User_{self.pk}_{self.user_name}'
+
+
+@dataclass
+class Game(BaseClass):
+    user_id: str = ''
+    is_active: bool = True
+    number: int = 0
+    tries_num: int = 10
+    is_win: bool = False
+
+    table_name: str = table_name_2
+
+    @classmethod
+    def create(cls, user_id, number):
+        dbase = DBConnect(db)
+        pk = dbase.create_object(cls.table_name, ['user_id', 'number'], [user_id, number])
+        return cls.get_object({'id': pk})
+
+    def __repr__(self):
+        return f'Game_{self.pk}_{self.user_id}'

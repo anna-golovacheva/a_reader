@@ -1,10 +1,10 @@
 from aiogram import Bot, Dispatcher, F
 from aiogram.filters import Command
 from aiogram.types import Message
-
+from random import randint
 from settings import BOT_TOKEN, db
 from data import DBConnect
-from classes import User
+from classes import User, Game
 
 
 # Создаем объекты бота и диспетчера
@@ -28,7 +28,7 @@ async def process_help_command(message: Message):
     )
 
 
-# Этот хэндлер будет срабатывать на любые ваши сообщения,
+# Этот хэндлер будет срабатывать на любые сообщения,
 # кроме команд "/start" и "/help"
 @dp.message(F.text.lower() == "давай")
 async def start_game(message: Message):
@@ -39,8 +39,10 @@ async def start_game(message: Message):
 
 if __name__ == '__main__':
     # bot_db = DBConnect(db)
-    user = User.create('Pam')
-    user.user_name = 'Ppam'
-    user.wins_num = 5
+    name = 'Jim'
+    user = User.create(name)
+    number = randint(1, 100)
+    game = Game.create(user.pk, number)
+
 
     # dp.run_polling(bot)

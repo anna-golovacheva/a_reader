@@ -14,3 +14,6 @@ load_dotenv(dotenv_path=dot_env)
 db = SQL("sqlite:///database.db")
 
 BOT_TOKEN = os.getenv('BOT_TOKEN')
+
+table_name_1 = 'users'
+table_name_2 = 'games'
