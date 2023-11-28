@@ -6,12 +6,11 @@ from cs50 import SQL
 
 
 BASE_DIR = Path(__file__).resolve().parent
-print(BASE_DIR)
 
 dot_env = os.path.join(BASE_DIR, '.env')
 load_dotenv(dotenv_path=dot_env)
 
-DB = SQL("sqlite:///database.db")
+DB = SQL('sqlite:///database.db')
 
 BOT_TOKEN = os.getenv('BOT_TOKEN')
 
