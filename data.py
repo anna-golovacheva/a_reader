@@ -24,13 +24,14 @@ class DBConnect:
         set_script = f'UPDATE {table_name} SET {field} = {value} WHERE id="{object_id}"'
         self.db_name.execute(set_script)
 
-    def get_objects(self, table_name:str, search: dict[str, str]):
-        searching = ','.join([f'{key}="{value}"' for key, value in search.items()])
+    def get_objects(self, table_name:str, search: dict[str, str | int | bool]):
+        searching = ' AND '.join([f'{key}={value}' for key, value in search.items()])
         select_script = f'SELECT * FROM {table_name} WHERE {searching}'
+        print(select_script)
         the_ids = self.db_name.execute(select_script)
         return the_ids
 
-    def delete_objects(self, table_name:str, delete: dict[str, str]):
-        deleting = ','.join([f'{key}="{value}"' for key, value in delete.items()])
+    def delete_objects(self, table_name:str, delete: dict[str, str | int | bool]):
+        deleting = ' AND '.join([f'{key}="{value}"' for key, value in delete.items()])
         delete_script = f'DELETE FROM {table_name} WHERE {deleting}'
         self.db_name.execute(delete_script)
