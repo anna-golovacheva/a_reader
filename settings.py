@@ -11,9 +11,11 @@ print(BASE_DIR)
 dot_env = os.path.join(BASE_DIR, '.env')
 load_dotenv(dotenv_path=dot_env)
 
-db = SQL("sqlite:///database.db")
+DB = SQL("sqlite:///database.db")
 
 BOT_TOKEN = os.getenv('BOT_TOKEN')
 
-table_name_1 = 'users'
-table_name_2 = 'games'
+TABLE_NAME_1 = 'users'
+TABLE_NAME_2 = 'games'
+
+TRIES = '10'
