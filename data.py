@@ -24,10 +24,12 @@ class DBConnect:
         set_script = f'UPDATE {table_name} SET {field} = {value} WHERE id="{object_id}"'
         self.db_name.execute(set_script)
 
-    def get_objects(self, table_name:str, search: dict[str, str | int | bool]):
-        searching = ' AND '.join([f'{key}={value}' for key, value in search.items()])
-        select_script = f'SELECT * FROM {table_name} WHERE {searching}'
-        print(select_script)
+    def get_objects(self, table_name: str, search: dict[str, str | int | bool] = None):
+        if search is None:
+            select_script = f'SELECT * FROM {table_name}'
+        else:
+            searching = ' AND '.join([f'{key}={value}' for key, value in search.items()])
+            select_script = f'SELECT * FROM {table_name} WHERE {searching}'
         the_ids = self.db_name.execute(select_script)
         return the_ids
 

@@ -18,7 +18,7 @@ class BaseClass:
             super().__setattr__(key, value)
 
     @classmethod
-    def get_object(cls, search: dict[str, str]):
+    def get_object(cls, search: dict[str, str | int | bool]):
         dbase = DBConnect(DB)
         data_list = dbase.get_objects(cls.table_name, search=search)
         if len(data_list) >= 1:
@@ -26,9 +26,17 @@ class BaseClass:
             return object
 
     @classmethod
-    def get_objects(cls, search: dict[str, str]):
+    def get_objects(cls, search: dict[str, str | int | bool]):
         dbase = DBConnect(DB)
         data_list = dbase.get_objects(cls.table_name, search)
+        if len(data_list) >= 1:
+            object_list = [cls(*list(data.values())) for data in data_list]
+            return object_list
+
+    @classmethod
+    def get_all(cls):
+        dbase = DBConnect(DB)
+        data_list = dbase.get_objects(cls.table_name)
         if len(data_list) >= 1:
             object_list = [cls(*list(data.values())) for data in data_list]
             return object_list

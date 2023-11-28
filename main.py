@@ -120,6 +120,21 @@ async def process_numbers_answer(message: Message):
         await message.answer('Мы еще не играем. Хотите сыграть?')
 
 
+@dp.message(Command(commands='stat'))
+async def process_stat_command(message: Message):
+    user = User.get_or_create(message.from_user)
+    all_users = User.get_all()
+    if all_users:
+        sorted_users = sorted(all_users, key=lambda x: x.wins_num, reverse=True)
+        place = sorted_users.index(user) + 1
+    await message.answer(
+        f'Всего игр сыграно: '
+        f'{user.games_num}\n'
+        f'Игр выиграно: {user.wins_num}\n'
+        f'Вы на {place} месте!'
+    )
+
+
 @dp.message()
 async def process_other_answers(message: Message):
     user = User.get_or_create(message.from_user)
